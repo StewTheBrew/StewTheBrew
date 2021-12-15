@@ -1,6 +1,6 @@
 # geods
 
-GeoDS --- Geological Data Science are a bunch of functions ready to use in python 3.x environment 
+GeoDS --- Geological Data Science are a bunch of functions ready to use in python 3.x environment. 
 
 It aims to handle and classify 3D data coming from scanning (laser scanner, photoscans...) i.e. 3D point clouds - in order to study geomechanics starting from the
 detection and the extraction of the main sets of discontinuities.
