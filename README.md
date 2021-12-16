@@ -13,8 +13,10 @@ It includes
   parameters input (explore the file if you are interested in using it, all you have to know to start a basic analysis is commented within).
 - the SSE (Supervised Set Extraction), a single function that classifies the point cloud while it extracts discontinuity sets following the user input (again, 
   all you have to know to start the extraction is commented within the file).
+- Automatic clustering techniques (K-Means and Gaussian Mixture) for a geological dataset.
   
 Be sure to first download all the dependencies needed including mplstereonet https://github.com/joferkington/mplstereonet to plot the results of your analysis.
+Also in this module be sure to change the file stereonet_axes.py with the one provided here that has slight improvements
 
 You can download the whole package or just copy the function(s) you need in the repository to use them and, perhaps, improve something.
 
