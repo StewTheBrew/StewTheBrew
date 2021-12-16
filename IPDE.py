@@ -180,7 +180,7 @@ Save the poles identified in the output? (Y/N)
                 
     if save == 'Y' or save == 'y':
         """READ THIS:
-            Here you just have to delete comment out the loop(s) that you don't want to run
+            Here you just have to delete or comment out the loop(s) that you don't want to run
             functionality is commented on top of each loop
             SAME IF YOU DON'T WANT TO SAVE STORE SETS (MOST COMMON)
         """
