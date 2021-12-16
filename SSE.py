@@ -18,7 +18,7 @@ import random
 path = os.getcwd()
 
 """ If the point cloud has already computed normals and is yet loaded
-   in the terminal or wherever you run the code just skip the line below.
+   in the terminal or wherever you run the code just skip (comment out) the line below.
    
    If not load the cloud as a pandas dataframe:
    the file must be a txt file with an header = [X, Y, Z, Nx, Ny, Nz, 
