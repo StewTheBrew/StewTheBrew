@@ -44,7 +44,6 @@ def get_k(n):
     k_max_dipdir = int(input(
         'Maximum value for k{0} dip direction: '.format(n)))
 
-    return get_k(n)
 
     com = input('Dip direction complementary values (Y/N)? ')
     if com == 'Y' or com == 'y':
