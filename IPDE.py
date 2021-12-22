@@ -56,7 +56,7 @@ import pickle
 path = os.getcwd()
 
 
-
+df = pd.read_csv(input(), delimiter="\t")
 
 #: below the function to manually select points on a polar stereoplot
 
