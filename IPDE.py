@@ -8,8 +8,6 @@ by the user. The analysis is performed on sample points (S) of the 3D point
 cloud, the number of which is always chosen by the user. In addition, 
 the angular tolerance range can be specified to identify coplanarity.
 
-It is then possible to choose whether to save the sets identified during the 
-computation or not.
 
 The function can be coupled to a facilitating mechanism that divides the 
 dataset into chunks, if this is very large and/or if you intend to start the 
@@ -44,7 +42,6 @@ If you have further doubts please read the comments in the code or just ask
 
 import os
 import pandas as pd
-import random
 import math
 import numpy as np
 import matplotlib.pyplot as plt
@@ -55,6 +52,12 @@ import pickle
 
 path = os.getcwd()
 
+widgets=[
+    ' [', progressbar.Timer(), '] ',
+    ' ', progressbar.Percentage(), ' ',
+    progressbar.Bar(),
+    ' (', progressbar.ETA(), ') ',
+]
 
 df = pd.read_csv(input(), delimiter="\t")
 
@@ -117,17 +120,36 @@ def IPDE():
     dip_t = int(input('Dip angle threshold: '))
     
     dip_dir_t = int(input('Dip direction angle threshold: '))
-    
-    save = input('''
-                 
-Save the poles identified in the output? (Y/N)
- n.b. this option is recommended only for consistent values of K: 
-''')
+   
     global df
     global poles
     global widgets
     
     
+    def random_seed_chunked(n):
+        
+        rand_row = dp.sample(replace=True)
+        
+        rand_dip = rand_row.iloc[0,0]
+        rand_dipdir = rand_row.iloc[0,1]
+        
+        values = chunks[c].loc[(chunks[c]['Dip (degrees)'] >= rand_dip - dip_t) & (chunks[c]['Dip (degrees)']
+                 <= rand_dip + dip_t) & (chunks[c]['Dip direction (degrees)'] >= rand_dipdir -
+                 dip_dir_t) & (chunks[c]['Dip direction (degrees)'] <= rand_dipdir + dip_dir_t)]
+    
+        values_size = len(values.index)
+        # global df1
+        global poles
+        
+        # def condition_X():
+        #     df1 = df[~df.isin(values)].dropna()
+        #     global values_size     
+        
+        if values_size > thres:
+            poles = pd.concat([poles , values]) 
+            
+        
+        
     def random_seed(n):
         
         rand_row = dp.sample(replace=True)
@@ -135,9 +157,9 @@ Save the poles identified in the output? (Y/N)
         rand_dip = rand_row.iloc[0,0]
         rand_dipdir = rand_row.iloc[0,1]
         
-        values = chunks[c].loc[(chunks[c]['Dip (degrees)'] >= rand_dip - dip_t) & (chunks[c]['Dip (degrees)']
-                 <= rand_dip + dip_t) & (chunks[c]['Dip direction (degrees)'] >= rand_dipdir -
-                 dip_dir_t) & (chunks[c]['Dip direction (degrees)'] <= rand_dipdir + dip_dir_t)]
+        values = df.loc[(df['Dip (degrees)'] >= rand_dip - rand_dip - dip_t) & (df['Dip (degrees)']
+                 <= rand_dip + dip_t) & (df['Dip direction (degrees)'] >= rand_dipdir -
+                 dip_dir_t) & (df['Dip direction (degrees)'] <= rand_dipdir + dip_dir_t)]
     
         values_size = len(values.index)
         # global df1
@@ -148,136 +170,67 @@ Save the poles identified in the output? (Y/N)
         #     global values_size     
         
         if values_size > thres:
-            poles = pd.concat([poles , values]) 
-            
-        
-        
-    def random_seed1(n):
-        
-        rand_row = dp.sample(replace=True)
-        
-        rand_dip = rand_row.iloc[0,0]
-        rand_dipdir = rand_row.iloc[0,1]
-        
-        values = chunks[c].loc[(chunks[c]['Dip (degrees)'] >= rand_dip - dip_t) & (chunks[c]['Dip (degrees)']
-                 <= rand_dip + dip_t) & (chunks[c]['Dip direction (degrees)'] >= rand_dipdir -
-                 dip_dir_t) & (chunks[c]['Dip direction (degrees)'] <= rand_dipdir + dip_dir_t)]
-    
-        values_size = len(values.index)
-        # global df1
-        global poles
-        
-        # def condition_X():
-        #     df1 = df[~df.isin(values)].dropna()
-        #     global values_size     
-        
-        if values_size > thres:
-            poles = pd.concat([poles , values]) 
-            values.loc[(values.R >= 0), 'R'] = random.randint(1, 255)
-            values.loc[(values.G >= 0), 'G'] = random.randint(1, 255)
-            values.loc[(values.B >= 0), 'B'] = random.randint(1, 255)
-            values.to_csv(os.path.join(path, 'k{0}.txt'.format(n)), index=False, sep='\t')            
+            poles = pd.concat([poles , values])            
                 
-    if save == 'Y' or save == 'y':
-        """READ THIS:
-            Here you just have to delete or comment out the loop(s) that you don't want to run
-            functionality is commented on top of each loop
-            SAME IF YOU DON'T WANT TO SAVE/STORE SETS (MOST COMMON)
+    
+        """READ THIS!!!:
+            Here you just have to delete comment out the loop(s) that you don't want to run.
+            Functionality is commented on top of each loop
+            SAME IF YOU DON'T WANT TO SAVE STORE SETS (MOST COMMON)
         """
         
-        #: BASIC ANALYSIS
-        for n in range(1, seed+1):
-            random_seed1(n)
-        
-        poles = poles.drop_duplicates()
-        
-        
-        #: SEQUENTIAL ANALYSIS OF CHUNKS N.B. IF YOU RUN THIS OR MULTIPROCESSING
-        #: YOU SHOULD CONSISTENTLY LOW K AND S VALUES!!!
-        for i in range(3, 20):
-            chunk = math.floor(len(df)/i)
-            if chunk == len(df)/i:
-                n_chunks = math.floor(len(df)/chunk)
-                chunks = np.array_split(df, n_chunks)
-                
-                for c in range(n_chunks):
-                    for n in progressbar.progressbar(range(seed+1), widgets=widgets): 
-                            
-                        random_seed1(n)
-                        poles = poles.drop_duplicates()
-                break
-            else:
-                continue
+    #: BASIC ANALYSIS
+    for n in progressbar.progressbar(range(seed+1), widgets=widgets):
           
-            
-        #: MULTIPROCESSING ANALYSIS OF CHUNKS
-        import multiprocessing
+        random_seed(n)
     
-        for i in range(3, 20):
-            chunk = math.floor(len(df)/i)
-            if chunk == len(df)/i:
-                n_chunks = math.floor(len(df)/chunk)
-                chunks = np.array_split(df, n_chunks)
-                break
-            else:
-                continue
-        pool = multiprocessing.Pool(4) #: here I passed a pool of 4 worker processes
-                                       #: you can pass 2 or if you don’t pass anything
-                                       #: then it will create a worker process pool based
-                                       #: on the cores available in the processor
-        pool.map(func=random_seed1, iterable=df, chunksize=n_chunks)
-        pool.close()
-        pool.join()
         poles = poles.drop_duplicates()
-            
-    else:
-        #: BASIC ANALYSIS
-        for n in range(1, seed+1):
-            random_seed(n)
-        
-        poles = poles.drop_duplicates()
-        
-        
-        #: SEQUENTIAL ANALYSIS OF CHUNKS N.B. IF YOU RUN THIS OR MULTIPROCESSING
-        #: YOU SHOULD CONSISTENTLY LOW K AND S VALUES!!!
-        for i in range(3, 20):
-            chunk = math.floor(len(df)/i)
-            if chunk == len(df)/i:
-                n_chunks = math.floor(len(df)/chunk)
-                chunks = np.array_split(df, n_chunks)
-                
-                for c in range(n_chunks):
-                    for n in progressbar.progressbar(range(seed+1), widgets=widgets): 
-                            
-                        random_seed(n)
-                        poles = poles.drop_duplicates()
-                break
-            else:
-                continue
-            
-            
-        #: MULTIPROCESSING ANALYSIS OF CHUNKS
-        import multiprocessing
     
-        for i in range(3, 20):
-            chunk = math.floor(len(df)/i)
-            if chunk == len(df)/i:
-                n_chunks = math.floor(len(df)/chunk)
-                chunks = np.array_split(df, n_chunks)
-                break
-            else:
-                continue
-        pool = multiprocessing.Pool(4) #: here I passed a pool of 4 worker processes
-                                       #: you can pass 2 or if you don’t pass anything
-                                       #: then it will create a worker process pool based
-                                       #: on the cores available in the processor
-        pool.map(func=random_seed, iterable=df, chunksize=n_chunks)
-        pool.close()
-        pool.join()
-        poles = poles.drop_duplicates()
+    
+    #: SEQUENTIAL ANALYSIS OF CHUNKS N.B. IF YOU RUN THIS OR MULTIPROCESSING
+    #: YOU SHOULD CONSISTENTLY LOW K AND S VALUES!!!
+    for i in range(3, 20):
+        chunk = math.floor(len(df)/i)
+        if chunk == len(df)/i:
+            n_chunks = math.floor(len(df)/chunk)
+            chunks = np.array_split(df, n_chunks)
+            
+            for c in range(n_chunks):
+                for n in progressbar.progressbar(range(seed+1), widgets=widgets): 
+                        
+                    random_seed_chunked(n)
+                    poles = poles.drop_duplicates()
+            break
+        else:
+            continue
+      
+        
+    #: MULTIPROCESSING ANALYSIS OF CHUNKS
+    import multiprocessing
+
+    for i in range(3, 20):
+        chunk = math.floor(len(df)/i)
+        if chunk == len(df)/i:
+            n_chunks = math.floor(len(df)/chunk)
+            chunks = np.array_split(df, n_chunks)
+            break
+        else:
+            continue
+    pool = multiprocessing.Pool(4) #: here I passed a pool of 4 worker processes
+                                   #: you can pass 2 or if you don’t pass anything
+                                   #: then it will create a worker process pool based
+                                   #: on the cores available in the processor
+    pool.map(func=random_seed, iterable=df, chunksize=n_chunks)
+    pool.close()
+    pool.join()
+    poles = poles.drop_duplicates()
+            
+
         
     poles.to_csv(os.path.join(path, 'ipde_poles_dataset.txt'), index=False, sep='\t')
-       
+
+
+#: Lines below runs the function and creates variables to be utilized for plotting       
 IPDE()
 dp1 = pd.DataFrame()
 dp1['Dip (degrees)'] = poles['Dip (degrees)']
