@@ -147,7 +147,8 @@ def IPDE():
         
         if values_size > thres:
             poles = pd.concat([poles , values]) 
-            
+        else:
+            del values 
         
         
     def random_seed(n):
@@ -171,7 +172,8 @@ def IPDE():
         
         if values_size > thres:
             poles = pd.concat([poles , values])            
-                
+        else:
+            del values       
     
         """READ THIS!!!:
             Here you just have to delete comment out the loop(s) that you don't want to run.
