@@ -14,6 +14,7 @@ It includes
 - the SSE (Supervised Set Extraction), a single function that classifies the point cloud while it extracts discontinuity sets following the user input (again, 
   all you have to know to start the extraction is commented within the file).
 - Automatic clustering techniques (K-Means and Gaussian Mixture) for a geological dataset.
+- A small dataset with the results of the analysis (both plot and numeric) that refers to a part of a survey taken in Massa Lubrense (NA) from IdroGeo Srl.
   
 Be sure to first download all the dependencies needed including mplstereonet https://github.com/joferkington/mplstereonet to plot the results of your analysis.
 Also in this module be sure to change the file stereonet_axes.py with the one provided here that has slight improvements
@@ -23,3 +24,5 @@ You can download the whole package or just copy the function(s) you need in the 
 All the work done and all possible contributions would be most likely included into a module ready to be directly installed. 
 These functions, along with others, have been condensed into an embryonic software that goes by the same name (GeoDS). Therefore, the possibility of combining all the 
 contributions for the benefit of the same and, one day, giving it a birth is not excluded.
+
+All the functions and algorithms presented here are included in a manuscript entitled "New methods for semi-automatic characterization of discontinuity sets from 3D point clouds: the Iterative Pole Density Estimation and the Supervised Set Extraction" by Stefano Cardia from Earth and Environmental Sciences Department (Aldo Moro University, Bari, Italy), Biagio Palma and Francesco Langella from IdroGeo Srl and Mario Parise, also from Earth and Environmental Sciences Department (Aldo Moro University, Bari, Italy).
