@@ -158,7 +158,7 @@ def IPDE():
         rand_dip = rand_row.iloc[0,0]
         rand_dipdir = rand_row.iloc[0,1]
         
-        values = df.loc[(df['Dip (degrees)'] >= rand_dip - rand_dip - dip_t) & (df['Dip (degrees)']
+        values = df.loc[(df['Dip (degrees)'] >= rand_dip - dip_t) & (df['Dip (degrees)']
                  <= rand_dip + dip_t) & (df['Dip direction (degrees)'] >= rand_dipdir -
                  dip_dir_t) & (df['Dip direction (degrees)'] <= rand_dipdir + dip_dir_t)]
     
